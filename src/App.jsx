@@ -1,4 +1,11 @@
 import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const SUPABASE_URL = "https://gjujjdmpxowzosnlrcum.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqdWpqZG1weG93em9zbmxyY3VtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNzY0NTMsImV4cCI6MjA1Njg1MjQ1M30.sWOSUFAz4Z4KKMNeZuqYiikUIiOeHFRfRZMLAojVMDA";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const USER_ID = "student";
+
 
 const SUBJECTS = [
   "Math (Algebra)",
