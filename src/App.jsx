@@ -284,6 +284,7 @@ function HomeworkTracker() {
   const [celebrateVisible, setCelebrateVisible] = useState(false);
   const [habitsCelebrate, setHabitsCelebrate] = useState(false);
   const [showTempHabitForm, setShowTempHabitForm] = useState(false);
+  const [tempHabits, setTempHabits] = useState([]);
   const [newTempHabit, setNewTempHabit] = useState({ label: "", startDate: "", endDate: "", color: "#a78bfa" });
   const [tests, setTests] = useState([]);
   const [showTestForm, setShowTestForm] = useState(false);
