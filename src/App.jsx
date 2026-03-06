@@ -619,6 +619,11 @@ function HomeworkTracker() {
         flexWrap: "wrap",
         gap: 12,
       }}>
+        <style>{`
+          @media (max-width: 599px) {
+            .header-right { align-items: flex-start !important; text-align: left !important; }
+          }
+        `}</style>
         <div>
           <div style={{ fontSize: 11, letterSpacing: 3, color: "#999", textTransform: "uppercase", marginBottom: 4 }}>
             Daily Check-In
@@ -627,7 +632,7 @@ function HomeworkTracker() {
             📚 Homework HQ
           </div>
         </div>
-        <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+        <div className="header-right" style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
           <div style={{ fontSize: 13, color: "#aaa" }}>{dateDisplay}</div>
           {todayType && (
             <div style={{ fontSize: 12, color: todayType === "A" ? "#3b82f6" : "#f59e0b", fontWeight: "bold", letterSpacing: 1 }}>
