@@ -13,13 +13,34 @@ const supabase = createClient(
 );
 
 export default async function handler(req, res) {
-  // Verify this is called from Vercel cron
   if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
   try {
-    // Get all push subscriptions from Supabase
+    // Get preferred reminder time
+    const { data: settings } = await supabase
+      .from('checkins')
+      .select('data')
+      .eq('user_id', 'reminder_settings')
+      .maybeSingle();
+
+    const preferredTime = settings?.data?.time || '17:00';
+    const [prefHour, prefMin] = preferredTime.split(':').map(Number);
+
+    // Get current time in ET
+    const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    const currentHour = now.getHours();
+    const currentMin = now.getMinutes();
+
+    // Only send if within 15 minutes of preferred time
+    const totalPref = prefHour * 60 + prefMin;
+    const totalNow = currentHour * 60 + currentMin;
+    if (Math.abs(totalNow - totalPref) > 15) {
+      return res.status(200).json({ skipped: true, reason: `Not time yet (${currentHour}:${currentMin} vs ${preferredTime})` });
+    }
+
+    // Get all subscriptions
     const { data, error } = await supabase
       .from('push_subscriptions')
       .select('subscription');
@@ -30,7 +51,7 @@ export default async function handler(req, res) {
       (data || []).map(row =>
         webpush.sendNotification(row.subscription, JSON.stringify({
           title: '📚 Homework HQ',
-          body: "5 PM check-in time! Let's knock out that homework. 💪",
+          body: `${preferredTime} check-in time! Let's knock out that homework. 💪`,
         }))
       )
     );

@@ -116,7 +116,8 @@ const QUOTES = [
 ];
 
 const getDailyQuote = () => {
-  const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+  const d = new Date();
+  const dayIndex = d.getFullYear() * 1000 + d.getMonth() * 31 + d.getDate();
   return QUOTES[dayIndex % QUOTES.length];
 };
 
@@ -282,6 +283,9 @@ function HomeworkTracker() {
   const [showTestForm, setShowTestForm] = useState(false);
   const [newTest, setNewTest] = useState({ subject: SUBJECTS[0], description: "", testDate: "", type: "Quiz" });
   const [showWeekendPrep, setShowWeekendPrep] = useState(false);
+  const [currentQuote] = useState(getDailyQuote());
+  const [showReminderModal, setShowReminderModal] = useState(false);
+  const [reminderTime, setReminderTime] = useState("17:00");
 
   // Load from storage
   useEffect(() => {
@@ -612,37 +616,35 @@ function HomeworkTracker() {
       <div style={{
         background: "#16181f",
         borderBottom: "1px solid #2a2d3a",
-        padding: "20px 28px",
+        padding: "16px 20px",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        gap: 12,
+        flexDirection: "column",
+        gap: 8,
       }}>
-        <style>{`
-          @media (max-width: 599px) {
-            .header-right { align-items: flex-start !important; text-align: left !important; }
-          }
-        `}</style>
-        <div>
-          <div style={{ fontSize: 11, letterSpacing: 3, color: "#999", textTransform: "uppercase", marginBottom: 4 }}>
-            Daily Check-In
+        {/* Top row: title left, date right */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <div style={{ fontSize: 11, letterSpacing: 3, color: "#999", textTransform: "uppercase", marginBottom: 4 }}>
+              Daily Check-In
+            </div>
+            <div style={{ fontSize: 22, fontWeight: "bold", color: "#fff" }}>
+              📚 Homework HQ
+            </div>
           </div>
-          <div style={{ fontSize: 22, fontWeight: "bold", color: "#fff" }}>
-            📚 Homework HQ
+          <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+            <div style={{ fontSize: 13, color: "#aaa" }}>{dateDisplay}</div>
+            {todayType && (
+              <div style={{ fontSize: 12, color: todayType === "A" ? "#3b82f6" : "#f59e0b", fontWeight: "bold", letterSpacing: 1 }}>
+                {todayType === "A" ? "📘" : "📙"} TODAY: {todayType} DAY
+              </div>
+            )}
+            {checkin.completed && (
+              <div style={{ fontSize: 11, color: "#2a9d5c" }}>✓ Check-in complete</div>
+            )}
           </div>
         </div>
-        <div className="header-right" style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
-          <div style={{ fontSize: 13, color: "#aaa" }}>{dateDisplay}</div>
-          {todayType && (
-            <div style={{ fontSize: 12, color: todayType === "A" ? "#3b82f6" : "#f59e0b", fontWeight: "bold", letterSpacing: 1 }}>
-              {todayType === "A" ? "📘" : "📙"} TODAY: {todayType} DAY
-            </div>
-          )}
-          {checkin.completed && (
-            <div style={{ fontSize: 11, color: "#2a9d5c" }}>✓ Check-in complete</div>
-          )}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 2 }}>
+        {/* Bottom row: buttons */}
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <button onClick={() => setShowWeekendPrep(true)} style={{
             padding: "6px 14px", background: "#a78bfa22",
             border: "1px solid #a78bfa55", color: "#a78bfa",
@@ -651,19 +653,7 @@ function HomeworkTracker() {
           }}>
             🗓 WEEKEND PREP
           </button>
-          <button onClick={async () => {
-            try {
-              const permission = await Notification.requestPermission();
-              if (permission !== 'granted') { alert('Please enable notifications in your browser settings.'); return; }
-              const reg = await navigator.serviceWorker.ready;
-              const sub = await reg.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: "BN5SCuZMCcbif275MKwCPNzoXAVQG5jRb58U8qnWqAdZ-0Fte6buu9_9NawI_U5rXdF9rFiH5ihSCf6smfw1Ykk",
-              });
-              await supabase.from('push_subscriptions').upsert({ user_id: USER_ID, subscription: sub.toJSON() }, { onConflict: 'user_id' });
-              alert('✅ Reminders enabled! You\'ll get a 5 PM check-in reminder every weekday.');
-            } catch (err) { alert('Could not enable notifications: ' + err.message); }
-          }} style={{
+          <button onClick={() => setShowReminderModal(true)} style={{
             padding: "6px 14px", background: "#2a9d5c22",
             border: "1px solid #2a9d5c55", color: "#2a9d5c",
             borderRadius: 6, cursor: "pointer", fontSize: 11,
@@ -671,9 +661,52 @@ function HomeworkTracker() {
           }}>
             🔔 REMINDERS
           </button>
-          </div>
         </div>
       </div>
+      {/* Reminder Modal */}
+      {showReminderModal && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.75)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div style={{ background: "#16181f", border: "1px solid #2a2d3a", borderRadius: 12, padding: 28, width: "100%", maxWidth: 360 }}>
+            <div style={{ fontSize: 11, letterSpacing: 2, color: "#2a9d5c", marginBottom: 16, textTransform: "uppercase" }}>🔔 Daily Reminder</div>
+            <div style={{ fontSize: 13, color: "#aaa", marginBottom: 20 }}>Set a daily weekday reminder for everyone using the app.</div>
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 11, color: "#777", letterSpacing: 1, marginBottom: 8 }}>REMINDER TIME</div>
+              <input type="time" value={reminderTime} onChange={e => setReminderTime(e.target.value)} style={{
+                width: "100%", padding: "10px 14px", background: "#0f1117",
+                border: "1px solid #2a2d3a", borderRadius: 6, color: "#e8eaf0",
+                fontSize: 16, fontFamily: "'Courier New', monospace", boxSizing: "border-box",
+              }} />
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={async () => {
+                try {
+                  const permission = await Notification.requestPermission();
+                  if (permission !== 'granted') { alert('Please enable notifications in your browser settings.'); return; }
+                  const reg = await navigator.serviceWorker.ready;
+                  const sub = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: "BN5SCuZMCcbif275MKwCPNzoXAVQG5jRb58U8qnWqAdZ-0Fte6buu9_9NawI_U5rXdF9rFiH5ihSCf6smfw1Ykk",
+                  });
+                  await supabase.from('push_subscriptions').upsert({ user_id: USER_ID, subscription: sub.toJSON(), reminder_time: reminderTime }, { onConflict: 'user_id' });
+                  // Save shared reminder time
+                  await supabase.from('checkins').upsert({ user_id: 'reminder_settings', data: { time: reminderTime }, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+                  setShowReminderModal(false);
+                  alert(`✅ Reminders set for ${reminderTime} every weekday!`);
+                } catch (err) { alert('Could not enable notifications: ' + err.message); }
+              }} style={{
+                flex: 1, padding: "10px", background: "#2a9d5c", border: "none",
+                color: "#fff", borderRadius: 6, cursor: "pointer", fontSize: 12,
+                fontFamily: "'Courier New', monospace", letterSpacing: 1, fontWeight: "bold",
+              }}>SAVE & ENABLE</button>
+              <button onClick={() => setShowReminderModal(false)} style={{
+                padding: "10px 16px", background: "none", border: "1px solid #2a2d3a",
+                color: "#777", borderRadius: 6, cursor: "pointer", fontSize: 12,
+                fontFamily: "'Courier New', monospace",
+              }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Weekend Prep Modal */}
       {showWeekendPrep && (() => {
@@ -838,7 +871,7 @@ function HomeworkTracker() {
 
       {/* Daily Quote */}
       {(() => {
-        const q = getDailyQuote();
+        const q = currentQuote;
         return (
           <div style={{
             background: "linear-gradient(135deg, #1a1200 0%, #0f1117 60%)",
