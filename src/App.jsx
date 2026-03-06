@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-
-
 import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = "https://gjujjdmpxowzosnlrcum.supabase.co";
@@ -296,33 +294,44 @@ function HomeworkTracker() {
   const [showReminderModal, setShowReminderModal] = useState(false);
   const [reminderTime, setReminderTime] = useState("17:00");
 
-  // Load from storage
+  // Load from Supabase
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("hw_tracker_data");
-      if (stored) {
-        const data = JSON.parse(stored);
-        setHistory(data.history || []);
-        if (data.today && data.today.date === todayKey()) {
-          setCheckin(data.today);
+    const load = async () => {
+      try {
+        const { data } = await supabase
+          .from('checkins')
+          .select('data')
+          .eq('user_id', USER_ID)
+          .maybeSingle();
+        if (data?.data) {
+          const d = data.data;
+          setHistory(d.history || []);
+          if (d.today && d.today.date === todayKey()) {
+            setCheckin(d.today);
+          }
+          if (d.tempHabits) setTempHabits(d.tempHabits);
+          if (d.tests) setTests(d.tests);
         }
-        if (data.tempHabits) setTempHabits(data.tempHabits);
-        if (data.tests) setTests(data.tests);
-      }
-    } catch (e) {}
+      } catch (e) {}
+    };
+    load();
   }, []);
 
   const [tempHabits, setTempHabits] = useState([]);
 
-  // Save to storage
-  const save = (updatedCheckin, updatedHistory, updatedTempHabits, updatedTests) => {
+  // Save to Supabase
+  const save = async (updatedCheckin, updatedHistory, updatedTempHabits, updatedTests) => {
     try {
-      localStorage.setItem("hw_tracker_data", JSON.stringify({
-        today: updatedCheckin,
-        history: updatedHistory,
-        tempHabits: updatedTempHabits !== undefined ? updatedTempHabits : tempHabits,
-        tests: updatedTests !== undefined ? updatedTests : tests,
-      }));
+      await supabase.from('checkins').upsert({
+        user_id: USER_ID,
+        data: {
+          today: updatedCheckin,
+          history: updatedHistory,
+          tempHabits: updatedTempHabits !== undefined ? updatedTempHabits : tempHabits,
+          tests: updatedTests !== undefined ? updatedTests : tests,
+        },
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'user_id' });
     } catch (e) {}
   };
 
