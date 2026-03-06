@@ -1,11 +1,4 @@
 import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
-
-const SUPABASE_URL = "https://gjujjdmpxowzosnlrcum.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqdWpqZG1weG93em9zbmxyY3VtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NzA5OTMsImV4cCI6MjA4ODM0Njk5M30.cqgdBE_qOe0GIyhamBp7HHBC9Knb0oeqwQGsy62if0s";
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-const USER_ID = "student"; // student's fixed ID
-const PARENT_ID = "parent"; // your view ID
 
 const SUBJECTS = [
   "Math (Algebra)",
@@ -182,7 +175,7 @@ function PendingView({ checkin, history, subjectColors, platformColors, tomorrow
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {focusTonight.map(a => {
               const overdue = isOverdue(a.dueDate);
-              const tagColor = overdue ? "#ef4444" : isDueToday(a.dueDate) ? "#f59e0b" : isDueSoon(a.dueDate) ? "#f59e0b" : "#888";
+              const tagColor = overdue ? "#ef4444" : isDueToday(a.dueDate) ? "#f59e0b" : isDueSoon(a.dueDate) ? "#f59e0b" : "#aaa";
               const tagLabel = overdue ? "OVERDUE" : isDueToday(a.dueDate) ? "DUE TODAY" : a.dueDate
                 ? `Due ${new Date(a.dueDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
                 : "No due date";
@@ -204,23 +197,23 @@ function PendingView({ checkin, history, subjectColors, platformColors, tomorrow
         {[
           { label: "Overdue", count: sorted.filter(a => isOverdue(a.dueDate)).length, color: "#ef4444" },
           { label: "Due Soon", count: sorted.filter(a => isDueSoon(a.dueDate) && !isOverdue(a.dueDate)).length, color: "#f59e0b" },
-          { label: "Pending", count: sorted.filter(a => !isOverdue(a.dueDate) && !isDueSoon(a.dueDate)).length, color: "#888" },
+          { label: "Pending", count: sorted.filter(a => !isOverdue(a.dueDate) && !isDueSoon(a.dueDate)).length, color: "#aaa" },
           { label: "Completed", count: completed.length, color: "#2a9d5c" },
         ].map(s => (
           <div key={s.label} style={{ background: "#16181f", border: "1px solid #2a2d3a", borderRadius: 8, padding: "12px 18px", flex: 1, minWidth: 80, textAlign: "center" }}>
             <div style={{ fontSize: 22, fontWeight: "bold", color: s.color }}>{s.count}</div>
-            <div style={{ fontSize: 10, color: "#666", letterSpacing: 1, marginTop: 3 }}>{s.label.toUpperCase()}</div>
+            <div style={{ fontSize: 10, color: "#999", letterSpacing: 1, marginTop: 3 }}>{s.label.toUpperCase()}</div>
           </div>
         ))}
       </div>
-      {sorted.length === 0 && <div style={{ color: "#444", textAlign: "center", padding: 40 }}>🎉 No pending assignments!</div>}
+      {sorted.length === 0 && <div style={{ color: "#777", textAlign: "center", padding: 40 }}>🎉 No pending assignments!</div>}
       {sorted.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {sorted.map(a => {
             const overdue = isOverdue(a.dueDate);
             const soon = isDueSoon(a.dueDate) && !overdue;
             const dueTdy = isDueToday(a.dueDate);
-            const tagColor = overdue ? "#ef4444" : dueTdy ? "#f59e0b" : soon ? "#f59e0b" : "#888";
+            const tagColor = overdue ? "#ef4444" : dueTdy ? "#f59e0b" : soon ? "#f59e0b" : "#aaa";
             const tagLabel = overdue ? "OVERDUE" : dueTdy ? "DUE TODAY" : a.dueDate
               ? `Due ${new Date(a.dueDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
               : "No due date";
@@ -231,7 +224,7 @@ function PendingView({ checkin, history, subjectColors, platformColors, tomorrow
                   <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 3, background: `${subjectColors[a.subject]}22`, color: subjectColors[a.subject] }}>{a.subject}</span>
                   <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 3, background: `${platformColors[a.platform]}22`, color: platformColors[a.platform] }}>{a.platform}</span>
                   <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 3, background: `${tagColor}22`, color: tagColor, fontWeight: "bold" }}>{tagLabel}</span>
-                  <span style={{ fontSize: 10, color: "#555" }}>Added {new Date(a.fromDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                  <span style={{ fontSize: 10, color: "#888" }}>Added {new Date(a.fromDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                   {overdue && (
                     <div style={{ marginLeft: "auto", width: 20, height: 20, borderRadius: "50%", background: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: "bold", color: "#fff", flexShrink: 0 }}>!</div>
                   )}
@@ -248,16 +241,16 @@ function PendingView({ checkin, history, subjectColors, platformColors, tomorrow
       )}
       {completed.length > 0 && (
         <div style={{ marginTop: 28 }}>
-          <div style={{ fontSize: 11, letterSpacing: 2, color: "#444", marginBottom: 12, textTransform: "uppercase" }}>✓ Completed</div>
+          <div style={{ fontSize: 11, letterSpacing: 2, color: "#777", marginBottom: 12, textTransform: "uppercase" }}>✓ Completed</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {completed.map(a => (
               <div key={`${a.fromDate}-${a.id}`} style={{ background: "#0a1a10", border: "1px solid #2a9d5c22", borderRadius: 8, padding: "10px 16px", display: "flex", alignItems: "center", gap: 10, opacity: 0.6 }}>
                 <span style={{ color: "#2a9d5c", fontSize: 12 }}>✓</span>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, color: "#666", textDecoration: "line-through" }}>{a.description}</div>
+                  <div style={{ fontSize: 13, color: "#999", textDecoration: "line-through" }}>{a.description}</div>
                   <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                    <span style={{ fontSize: 10, color: "#444" }}>{a.subject}</span>
-                    <span style={{ fontSize: 10, color: "#444" }}>{a.platform}</span>
+                    <span style={{ fontSize: 10, color: "#777" }}>{a.subject}</span>
+                    <span style={{ fontSize: 10, color: "#777" }}>{a.platform}</span>
                   </div>
                 </div>
               </div>
@@ -284,89 +277,43 @@ function HomeworkTracker() {
   const [celebrateVisible, setCelebrateVisible] = useState(false);
   const [habitsCelebrate, setHabitsCelebrate] = useState(false);
   const [showTempHabitForm, setShowTempHabitForm] = useState(false);
-  const [tempHabits, setTempHabits] = useState([]);
   const [newTempHabit, setNewTempHabit] = useState({ label: "", startDate: "", endDate: "", color: "#a78bfa" });
   const [tests, setTests] = useState([]);
   const [showTestForm, setShowTestForm] = useState(false);
   const [newTest, setNewTest] = useState({ subject: SUBJECTS[0], description: "", testDate: "", type: "Quiz" });
   const [showWeekendPrep, setShowWeekendPrep] = useState(false);
 
-  // Load from Supabase + real-time subscription
+  // Load from storage
   useEffect(() => {
-    const load = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("checkins")
-          .select("data")
-          .eq("user_id", USER_ID)
-          .maybeSingle();
-        if (error || !data) return;
-        const d = data.data;
-        if (d.history) setHistory(d.history);
-        if (d.today && d.today.date === todayKey()) setCheckin(d.today);
-        if (d.tempHabits) setTempHabits(d.tempHabits);
-        if (d.tests) setTests(d.tests);
-      } catch(e) {}
-    };
-    load();
-
-    const channel = supabase
-      .channel("checkins-changes")
-      .on("postgres_changes", { event: "*", schema: "public", table: "checkins", filter: `user_id=eq.${USER_ID}` }, (payload) => {
-        const d = payload.new.data;
-        if (d.history) setHistory(d.history);
-        if (d.today && d.today.date === todayKey()) setCheckin(d.today);
-        if (d.tempHabits) setTempHabits(d.tempHabits);
-        if (d.tests) setTests(d.tests);
-      })
-      .subscribe();
-
-    return () => supabase.removeChannel(channel);
-  }, []);
-
-  // Save to Supabase
-  const save = (updatedCheckin, updatedHistory, updatedTempHabits, updatedTests) => {
-    const payload = {
-      today: updatedCheckin,
-      history: updatedHistory,
-      tempHabits: updatedTempHabits !== undefined ? updatedTempHabits : tempHabits,
-      tests: updatedTests !== undefined ? updatedTests : tests,
-    };
-    supabase.from("checkins").upsert({ user_id: USER_ID, data: payload, updated_at: new Date().toISOString() }, { onConflict: "user_id" }).then(() => {});
-  };
-
-  const VAPID_PUBLIC_KEY = "BN5SCuZMCcbif275MKwCPNzoXAVQG5jRb58U8qnWqAdZ-0Fte6buu9_9NawI_U5rXdF9rFiH5ihSCf6smfw1Ykk";
-
-  // Register service worker
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(console.error);
-    }
-  }, []);
-
-  const enableNotifications = async () => {
     try {
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') {
-        alert('Please enable notifications in your browser settings.');
-        return;
+      const stored = localStorage.getItem("hw_tracker_data");
+      if (stored) {
+        const data = JSON.parse(stored);
+        setHistory(data.history || []);
+        if (data.today && data.today.date === todayKey()) {
+          setCheckin(data.today);
+        }
+        if (data.tempHabits) setTempHabits(data.tempHabits);
+        if (data.tests) setTests(data.tests);
       }
-      const reg = await navigator.serviceWorker.ready;
-      const sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: VAPID_PUBLIC_KEY,
-      });
-      // Save subscription to Supabase
-      await supabase.from('push_subscriptions').upsert({
-        user_id: USER_ID,
-        subscription: sub.toJSON(),
-      }, { onConflict: 'user_id' });
-      alert('✅ Reminders enabled! You\'ll get a 5 PM check-in reminder every weekday.');
-    } catch (err) {
-      console.error('Notification error:', err);
-      alert('Could not enable notifications: ' + err.message);
-    }
+    } catch (e) {}
+  }, []);
+
+  const [tempHabits, setTempHabits] = useState([]);
+
+  // Save to storage
+  const save = (updatedCheckin, updatedHistory, updatedTempHabits, updatedTests) => {
+    try {
+      localStorage.setItem("hw_tracker_data", JSON.stringify({
+        today: updatedCheckin,
+        history: updatedHistory,
+        tempHabits: updatedTempHabits !== undefined ? updatedTempHabits : tempHabits,
+        tests: updatedTests !== undefined ? updatedTests : tests,
+      }));
+    } catch (e) {}
   };
+
+  const checkHabitsComplete = (nextCheckin, currentTempHabits) => {
     const today = todayKey();
     const bioNotes = nextCheckin.habitBioNotes || false;
     const bioPractice = nextCheckin.habitBioPractice || false;
@@ -615,6 +562,7 @@ function HomeworkTracker() {
       fontFamily: "'Courier New', monospace",
       padding: "0",
     }}>
+      <style>{`body, html { background: #0f1117 !important; margin: 0; padding: 0; }`}</style>
       {/* Confetti + Sound celebrate overlay — all assignments done */}
       {celebrateVisible && (
         <div style={{
@@ -672,7 +620,7 @@ function HomeworkTracker() {
         gap: 12,
       }}>
         <div>
-          <div style={{ fontSize: 11, letterSpacing: 3, color: "#666", textTransform: "uppercase", marginBottom: 4 }}>
+          <div style={{ fontSize: 11, letterSpacing: 3, color: "#999", textTransform: "uppercase", marginBottom: 4 }}>
             Daily Check-In
           </div>
           <div style={{ fontSize: 22, fontWeight: "bold", color: "#fff" }}>
@@ -680,7 +628,7 @@ function HomeworkTracker() {
           </div>
         </div>
         <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
-          <div style={{ fontSize: 13, color: "#888" }}>{dateDisplay}</div>
+          <div style={{ fontSize: 13, color: "#aaa" }}>{dateDisplay}</div>
           {todayType && (
             <div style={{ fontSize: 12, color: todayType === "A" ? "#3b82f6" : "#f59e0b", fontWeight: "bold", letterSpacing: 1 }}>
               {todayType === "A" ? "📘" : "📙"} TODAY: {todayType} DAY
@@ -689,24 +637,14 @@ function HomeworkTracker() {
           {checkin.completed && (
             <div style={{ fontSize: 11, color: "#2a9d5c" }}>✓ Check-in complete</div>
           )}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 2 }}>
           <button onClick={() => setShowWeekendPrep(true)} style={{
             padding: "6px 14px", background: "#a78bfa22",
             border: "1px solid #a78bfa55", color: "#a78bfa",
             borderRadius: 6, cursor: "pointer", fontSize: 11,
-            fontFamily: "'Courier New', monospace", letterSpacing: 1,
+            fontFamily: "'Courier New', monospace", letterSpacing: 1, marginTop: 2,
           }}>
             🗓 WEEKEND PREP
           </button>
-          <button onClick={enableNotifications} style={{
-            padding: "6px 14px", background: "#2a9d5c22",
-            border: "1px solid #2a9d5c55", color: "#2a9d5c",
-            borderRadius: 6, cursor: "pointer", fontSize: 11,
-            fontFamily: "'Courier New', monospace", letterSpacing: 1,
-          }}>
-            🔔 REMINDERS
-          </button>
-          </div>
         </div>
       </div>
 
@@ -775,12 +713,12 @@ function HomeworkTracker() {
                     🗓 Week of {nextMon.toLocaleDateString("en-US", { month: "long", day: "numeric" })}
                   </div>
                 </div>
-                <button onClick={() => setShowWeekendPrep(false)} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: 24 }}>×</button>
+                <button onClick={() => setShowWeekendPrep(false)} style={{ background: "none", border: "none", color: "#999", cursor: "pointer", fontSize: 24 }}>×</button>
               </div>
 
               {/* Next week schedule */}
               <div style={{ marginBottom: 24 }}>
-                <div style={{ fontSize: 10, color: "#666", letterSpacing: 2, marginBottom: 12, textTransform: "uppercase" }}>Next Week Schedule</div>
+                <div style={{ fontSize: 10, color: "#999", letterSpacing: 2, marginBottom: 12, textTransform: "uppercase" }}>Next Week Schedule</div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   {weekDays.map(d => (
                     <div key={d.key} style={{
@@ -788,11 +726,11 @@ function HomeworkTracker() {
                       border: `1px solid ${d.dayType === "A" ? "#3b82f633" : "#f59e0b33"}`,
                       borderRadius: 8, padding: "10px 12px", textAlign: "center",
                     }}>
-                      <div style={{ fontSize: 10, color: "#555" }}>{d.name}</div>
+                      <div style={{ fontSize: 10, color: "#888" }}>{d.name}</div>
                       <div style={{ fontSize: 14, fontWeight: "bold", color: d.dayType === "A" ? "#3b82f6" : "#f59e0b", marginTop: 4 }}>
                         {d.dayType} Day
                       </div>
-                      <div style={{ fontSize: 9, color: "#444", marginTop: 3 }}>
+                      <div style={{ fontSize: 9, color: "#777", marginTop: 3 }}>
                         {(d.dayType === "A" ? A_DAY_SUBJECTS : B_DAY_SUBJECTS).map(s => s.split(" ")[0]).join(", ")}
                       </div>
                     </div>
@@ -816,11 +754,11 @@ function HomeworkTracker() {
 
               {/* Next week assignments */}
               <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 10, color: "#666", letterSpacing: 2, marginBottom: 12, textTransform: "uppercase" }}>
+                <div style={{ fontSize: 10, color: "#999", letterSpacing: 2, marginBottom: 12, textTransform: "uppercase" }}>
                   📋 Due Next Week ({nextWeekAssignments.length})
                 </div>
                 {nextWeekAssignments.length === 0 ? (
-                  <div style={{ color: "#444", fontSize: 13, padding: "10px 0" }}>Nothing logged due next week yet.</div>
+                  <div style={{ color: "#777", fontSize: 13, padding: "10px 0" }}>Nothing logged due next week yet.</div>
                 ) : (
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                     {nextWeekAssignments.map((a, i) => {
@@ -832,7 +770,7 @@ function HomeworkTracker() {
                           <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 3, background: `${subjectColors[a.subject]}22`, color: subjectColors[a.subject] }}>{a.subject}</span>
                           <span style={{ fontSize: 13, color: "#e8eaf0", flex: 1 }}>{a.description}</span>
                           {dayInfo && <span style={{ fontSize: 10, color: dayInfo === "A" ? "#3b82f6" : "#f59e0b" }}>{dayInfo} Day</span>}
-                          <span style={{ fontSize: 10, color: "#888" }}>{dt.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}</span>
+                          <span style={{ fontSize: 10, color: "#aaa" }}>{dt.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}</span>
                         </div>
                       );
                     })}
@@ -855,7 +793,7 @@ function HomeworkTracker() {
                           <span style={{ fontSize: 10, color: "#ffd700", padding: "2px 7px", borderRadius: 3, background: "#ffd70011" }}>{t.type}</span>
                           <span style={{ fontSize: 13, color: "#e8eaf0", flex: 1 }}>{t.description}</span>
                           {dayInfo && <span style={{ fontSize: 10, color: dayInfo === "A" ? "#3b82f6" : "#f59e0b" }}>{dayInfo} Day</span>}
-                          <span style={{ fontSize: 10, color: "#888" }}>{dt.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}</span>
+                          <span style={{ fontSize: 10, color: "#aaa" }}>{dt.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}</span>
                         </div>
                       );
                     })}
@@ -863,7 +801,7 @@ function HomeworkTracker() {
                 </div>
               )}
 
-              <div style={{ fontSize: 11, color: "#444", textAlign: "center", marginTop: 8 }}>
+              <div style={{ fontSize: 11, color: "#777", textAlign: "center", marginTop: 8 }}>
                 Use this weekend to get ahead. Clear overdue work first, then tackle what's due early next week.
               </div>
             </div>
@@ -894,7 +832,7 @@ function HomeworkTracker() {
                 "{q.text}"
               </div>
               {q.author && (
-                <div style={{ fontSize: 10, color: "#666", marginTop: 3, letterSpacing: 1 }}>
+                <div style={{ fontSize: 10, color: "#999", marginTop: 3, letterSpacing: 1 }}>
                   — {q.author}
                 </div>
               )}
@@ -918,7 +856,7 @@ function HomeworkTracker() {
               <span style={{ fontSize: 12, color: tomorrowType === "A" ? "#3b82f6" : "#f59e0b", fontWeight: "bold", letterSpacing: 1 }}>
                 {tomorrowName.toUpperCase()} IS A{tomorrowType === "A" ? "N" : ""} {tomorrowType} DAY
               </span>
-              <span style={{ fontSize: 11, color: "#555", marginLeft: 10 }}>
+              <span style={{ fontSize: 11, color: "#888", marginLeft: 10 }}>
                 — prioritize {tomorrowType} day subjects tonight
               </span>
             </div>
@@ -964,65 +902,70 @@ function HomeworkTracker() {
         );
       })()}
 
-      {/* Stats Bar */}
-      <div style={{
-        background: "#16181f",
-        borderBottom: "1px solid #2a2d3a",
-        padding: "10px 28px",
-        display: "flex",
-        gap: 0,
-        overflowX: "auto",
-      }}>
-        {/* Streak */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, paddingRight: 24, borderRight: "1px solid #2a2d3a", marginRight: 24, flexShrink: 0 }}>
-          <span style={{ fontSize: 22 }}>🔥</span>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: "bold", color: streak > 0 ? "#f97316" : "#444", lineHeight: 1 }}>{streak}</div>
-            <div style={{ fontSize: 9, color: "#555", letterSpacing: 1, marginTop: 2 }}>DAY STREAK</div>
-          </div>
-        </div>
-        {/* Weekly Grade */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, paddingRight: 24, borderRight: "1px solid #2a2d3a", marginRight: 24, flexShrink: 0 }}>
-          <span style={{ fontSize: 22 }}>📊</span>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: "bold", color: weekGrade ? weekGrade.color : "#444", lineHeight: 1 }}>
-              {weekGrade ? `${weekGrade.grade} (${weekGrade.pct}%)` : "—"}
-            </div>
-            <div style={{ fontSize: 9, color: "#555", letterSpacing: 1, marginTop: 2 }}>THIS WEEK</div>
-          </div>
-        </div>
-        {/* Win Wall */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-          <span style={{ fontSize: 22 }}>🏆</span>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: "bold", color: winDays > 0 ? "#ffd700" : "#444", lineHeight: 1 }}>{winDays}</div>
-            <div style={{ fontSize: 9, color: "#555", letterSpacing: 1, marginTop: 2 }}>PERFECT DAYS</div>
-          </div>
-        </div>
-      </div>
-
       {/* Nav */}
       <div style={{
-        display: "flex",
         borderBottom: "1px solid #2a2d3a",
         background: "#16181f",
       }}>
-      {["today", "pending", "history", "parent"].map(tab => (
-          <button key={tab} onClick={() => setView(tab)} style={{
-            padding: "12px 24px",
-            background: "none",
-            border: "none",
-            color: view === tab ? "#ffd700" : "#666",
-            cursor: "pointer",
-            fontSize: 13,
-            letterSpacing: 1,
-            textTransform: "uppercase",
-            borderBottom: view === tab ? "2px solid #ffd700" : "2px solid transparent",
-            fontFamily: "'Courier New', monospace",
-          }}>
-            {tab === "today" ? "📋 Today" : tab === "pending" ? "📚 Homework Stack" : tab === "history" ? "📅 History" : "⚡ TL;DR"}
-          </button>
-        ))}
+        {/* Mobile dropdown */}
+        <div style={{ display: "block" }} className="mobile-nav">
+          <select
+            value={view}
+            onChange={e => setView(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "14px 20px",
+              background: "#16181f",
+              color: "#ffd700",
+              border: "none",
+              borderBottom: "2px solid #ffd700",
+              fontSize: 14,
+              fontFamily: "'Courier New', monospace",
+              letterSpacing: 1,
+              textTransform: "uppercase",
+              cursor: "pointer",
+              appearance: "none",
+              WebkitAppearance: "none",
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffd700' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "right 16px center",
+            }}
+          >
+            <option value="today">📋 Today</option>
+            <option value="pending">📚 Homework Stack</option>
+            <option value="history">📅 History</option>
+            <option value="parent">⚡ TL;DR</option>
+          </select>
+        </div>
+        <style>{`
+          @media (min-width: 600px) {
+            .mobile-nav { display: none !important; }
+            .desktop-nav { display: flex !important; }
+          }
+          @media (max-width: 599px) {
+            .mobile-nav { display: block !important; }
+            .desktop-nav { display: none !important; }
+          }
+        `}</style>
+        {/* Desktop tabs */}
+        <div className="desktop-nav" style={{ display: "none", justifyContent: "center" }}>
+          {["today", "pending", "history", "parent"].map(tab => (
+            <button key={tab} onClick={() => setView(tab)} style={{
+              padding: "12px 20px",
+              background: "none",
+              border: "none",
+              color: view === tab ? "#ffd700" : "#999",
+              cursor: "pointer",
+              fontSize: 12,
+              letterSpacing: 1,
+              textTransform: "uppercase",
+              borderBottom: view === tab ? "2px solid #ffd700" : "2px solid transparent",
+              fontFamily: "'Courier New', monospace",
+            }}>
+              {tab === "today" ? "📋 Today" : tab === "pending" ? "📚 Stack" : tab === "history" ? "📅 History" : "⚡ TL;DR"}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "24px 20px" }}>
@@ -1038,14 +981,14 @@ function HomeworkTracker() {
               marginBottom: 20,
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <div style={{ fontSize: 11, letterSpacing: 2, color: "#888", textTransform: "uppercase" }}>
+                <div style={{ fontSize: 11, letterSpacing: 2, color: "#aaa", textTransform: "uppercase" }}>
                   Daily Habits
                 </div>
                 <button onClick={() => setShowTempHabitForm(!showTempHabitForm)} style={{
                   padding: "6px 14px",
                   background: showTempHabitForm ? "#2a2d3a" : "#a78bfa22",
-                  border: `1px solid ${showTempHabitForm ? "#444" : "#a78bfa66"}`,
-                  color: showTempHabitForm ? "#666" : "#a78bfa",
+                  border: `1px solid ${showTempHabitForm ? "#777" : "#a78bfa66"}`,
+                  color: showTempHabitForm ? "#999" : "#a78bfa",
                   borderRadius: 6, cursor: "pointer", fontSize: 11,
                   fontFamily: "'Courier New', monospace", letterSpacing: 1,
                 }}>
@@ -1061,7 +1004,7 @@ function HomeworkTracker() {
                 }}>
                   <div style={{ fontSize: 10, color: "#a78bfa", letterSpacing: 1, marginBottom: 10 }}>NEW TEMPORARY HABIT</div>
                   <div style={{ marginBottom: 10 }}>
-                    <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>HABIT / STUDY GOAL *</div>
+                    <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>HABIT / STUDY GOAL *</div>
                     <input
                       placeholder="e.g. Study Bio Chapter 14 for quiz"
                       value={newTempHabit.label}
@@ -1075,14 +1018,14 @@ function HomeworkTracker() {
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
                     <div>
-                      <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>START DATE *</div>
+                      <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>START DATE *</div>
                       <input type="date" value={newTempHabit.startDate}
                         onChange={e => setNewTempHabit({ ...newTempHabit, startDate: e.target.value })}
                         style={{ width: "100%", padding: "8px 10px", background: "#16181f", border: `1px solid ${!newTempHabit.startDate ? "#a78bfa55" : "#2a2d3a"}`, color: "#e8eaf0", borderRadius: 5, fontFamily: "'Courier New', monospace", fontSize: 12, boxSizing: "border-box" }}
                       />
                     </div>
                     <div>
-                      <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>END DATE *</div>
+                      <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>END DATE *</div>
                       <input type="date" value={newTempHabit.endDate}
                         onChange={e => setNewTempHabit({ ...newTempHabit, endDate: e.target.value })}
                         style={{ width: "100%", padding: "8px 10px", background: "#16181f", border: `1px solid ${!newTempHabit.endDate ? "#a78bfa55" : "#2a2d3a"}`, color: "#e8eaf0", borderRadius: 5, fontFamily: "'Courier New', monospace", fontSize: 12, boxSizing: "border-box" }}
@@ -1100,7 +1043,7 @@ function HomeworkTracker() {
                   }} style={{
                     padding: "9px 20px",
                     background: (newTempHabit.label.trim() && newTempHabit.startDate && newTempHabit.endDate) ? "#a78bfa" : "#2a2d3a",
-                    color: (newTempHabit.label.trim() && newTempHabit.startDate && newTempHabit.endDate) ? "#0f1117" : "#555",
+                    color: (newTempHabit.label.trim() && newTempHabit.startDate && newTempHabit.endDate) ? "#0f1117" : "#888",
                     border: "none", borderRadius: 6, cursor: "pointer",
                     fontFamily: "'Courier New', monospace", fontWeight: "bold", fontSize: 12, letterSpacing: 1,
                   }}>
@@ -1149,10 +1092,10 @@ function HomeworkTracker() {
                         </button>
                         <div style={{ flex: 1 }}>
                           <div style={{
-                            fontSize: 13, color: done ? "#555" : "#e8eaf0",
+                            fontSize: 13, color: done ? "#888" : "#e8eaf0",
                             textDecoration: done ? "line-through" : "none", transition: "all 0.2s",
                           }}>{habit.label}</div>
-                          <div style={{ fontSize: 11, color: "#555", marginTop: 2 }}>{habit.sublabel}</div>
+                          <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>{habit.sublabel}</div>
                         </div>
                       </div>
                     </div>
@@ -1187,12 +1130,12 @@ function HomeworkTracker() {
                             {done ? "✓" : ""}
                           </button>
                           <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 13, color: done ? "#555" : "#e8eaf0", textDecoration: done ? "line-through" : "none", transition: "all 0.2s" }}>
+                            <div style={{ fontSize: 13, color: done ? "#888" : "#e8eaf0", textDecoration: done ? "line-through" : "none", transition: "all 0.2s" }}>
                               {habit.label}
                             </div>
                             <div style={{ display: "flex", gap: 10, marginTop: 3, flexWrap: "wrap" }}>
                               <span style={{ fontSize: 10, color: "#a78bfa" }}>Temporary habit</span>
-                              <span style={{ fontSize: 10, color: daysLeft <= 1 ? "#f59e0b" : "#555" }}>
+                              <span style={{ fontSize: 10, color: daysLeft <= 1 ? "#f59e0b" : "#888" }}>
                                 {daysLeft === 0 ? "Last day!" : daysLeft === 1 ? "1 day left" : `${daysLeft}d left · ends ${new Date(habit.endDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
                               </span>
                             </div>
@@ -1219,8 +1162,8 @@ function HomeworkTracker() {
                       border: "2px solid #f9731644", background: "transparent",
                     }} />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13, color: "#555" }}>Work on Delta Math</div>
-                      <div style={{ fontSize: 11, color: "#444", marginTop: 2 }}>Add a Delta Math assignment in Assignments List to track it here</div>
+                      <div style={{ fontSize: 13, color: "#888" }}>Work on Delta Math</div>
+                      <div style={{ fontSize: 11, color: "#777", marginTop: 2 }}>Add a Delta Math assignment in Assignments List to track it here</div>
                     </div>
                   </div>
                 )}
@@ -1259,18 +1202,18 @@ function HomeworkTracker() {
                         </button>
                         <div style={{ flex: 1 }}>
                           <div style={{
-                            fontSize: 13, color: done ? "#555" : "#e8eaf0",
+                            fontSize: 13, color: done ? "#888" : "#e8eaf0",
                             textDecoration: done ? "line-through" : "none",
                           }}>{packet.description}</div>
                           <div style={{ display: "flex", gap: 10, marginTop: 3, flexWrap: "wrap", alignItems: "center" }}>
                             <span style={{ fontSize: 11, color: "#f97316" }}>Delta Math</span>
                             {packet.dateAssigned && (
-                              <span style={{ fontSize: 11, color: "#555" }}>
+                              <span style={{ fontSize: 11, color: "#888" }}>
                                 Assigned {new Date(packet.dateAssigned + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                               </span>
                             )}
                             {packet.dueDate && (
-                              <span style={{ fontSize: 11, color: isOverdue ? "#ef4444" : daysLeft <= 2 ? "#f59e0b" : "#888" }}>
+                              <span style={{ fontSize: 11, color: isOverdue ? "#ef4444" : daysLeft <= 2 ? "#f59e0b" : "#aaa" }}>
                                 {isOverdue ? "⚠ Overdue" : daysLeft === 0 ? "Due today" : `Due ${new Date(packet.dueDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${daysLeft}d left`}
                               </span>
                             )}
@@ -1298,14 +1241,14 @@ function HomeworkTracker() {
                                 fontSize: 14, fontWeight: "bold", textAlign: "center",
                               }}
                             />
-                            <span style={{ fontSize: 12, color: "#555" }}>%</span>
+                            <span style={{ fontSize: 12, color: "#888" }}>%</span>
                           </div>
                         )}
                       </div>
 
                       {/* Progress bar */}
                       <div style={{ marginTop: 10, paddingLeft: 32 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "#555", marginBottom: 4 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "#888", marginBottom: 4 }}>
                           <span>Progress</span>
                           <span style={{ color: pct >= 100 ? "#2a9d5c" : "#f97316" }}>{pct}%</span>
                         </div>
@@ -1346,7 +1289,7 @@ function HomeworkTracker() {
               <div style={{ marginBottom: 24 }}>
                 <div style={{
                   display: "flex", justifyContent: "space-between",
-                  fontSize: 12, color: "#888", marginBottom: 8
+                  fontSize: 12, color: "#aaa", marginBottom: 8
                 }}>
                   <span>ASSIGNMENT PROGRESS</span>
                   <span style={{ color: allDone ? "#2a9d5c" : "#ffd700" }}>
@@ -1373,7 +1316,7 @@ function HomeworkTracker() {
               padding: "20px",
               marginBottom: 20,
             }}>
-              <div style={{ fontSize: 11, letterSpacing: 2, color: "#888", marginBottom: 14, textTransform: "uppercase" }}>
+              <div style={{ fontSize: 11, letterSpacing: 2, color: "#aaa", marginBottom: 14, textTransform: "uppercase" }}>
                 Daily Platforms Check-In {allPlatformsChecked ? "✓" : ""}
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
@@ -1385,7 +1328,7 @@ function HomeworkTracker() {
                       borderRadius: 6,
                       border: `2px solid ${checked ? platformColors[p] : "#2a2d3a"}`,
                       background: checked ? `${platformColors[p]}22` : "#0f1117",
-                      color: checked ? platformColors[p] : "#666",
+                      color: checked ? platformColors[p] : "#999",
                       cursor: "pointer",
                       fontSize: 13,
                       fontFamily: "'Courier New', monospace",
@@ -1414,7 +1357,7 @@ function HomeworkTracker() {
                 display: "flex", justifyContent: "space-between", alignItems: "center",
                 marginBottom: 16, flexWrap: "wrap", gap: 10
               }}>
-                <div style={{ fontSize: 11, letterSpacing: 2, color: "#888", textTransform: "uppercase" }}>
+                <div style={{ fontSize: 11, letterSpacing: 2, color: "#aaa", textTransform: "uppercase" }}>
                   Assignments List
                 </div>
                 <button onClick={() => setShowAddForm(!showAddForm)} style={{
@@ -1444,7 +1387,7 @@ function HomeworkTracker() {
                 }}>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
                     <div>
-                      <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>SUBJECT</div>
+                      <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>SUBJECT</div>
                       <select value={newAssignment.subject}
                         onChange={e => setNewAssignment({ ...newAssignment, subject: e.target.value })}
                         style={{
@@ -1467,7 +1410,7 @@ function HomeworkTracker() {
                       </select>
                     </div>
                     <div>
-                      <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>PLATFORM</div>
+                      <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>PLATFORM</div>
                       <select value={newAssignment.platform}
                         onChange={e => setNewAssignment({ ...newAssignment, platform: e.target.value })}
                         style={{
@@ -1480,7 +1423,7 @@ function HomeworkTracker() {
                     </div>
                   </div>
                   <div style={{ marginBottom: 10 }}>
-                    <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>DESCRIPTION</div>
+                    <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>DESCRIPTION</div>
                     <input
                       placeholder="e.g. Chapter 4 reading + questions"
                       value={newAssignment.description}
@@ -1496,7 +1439,7 @@ function HomeworkTracker() {
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                       <div>
-                        <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>DATE ASSIGNED *</div>
+                        <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>DATE ASSIGNED *</div>
                         <input type="date"
                           value={newAssignment.dateAssigned}
                           onChange={e => setNewAssignment({ ...newAssignment, dateAssigned: e.target.value })}
@@ -1509,7 +1452,7 @@ function HomeworkTracker() {
                         />
                       </div>
                       <div>
-                        <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>DATE DUE *</div>
+                        <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>DATE DUE *</div>
                         <input type="date"
                           value={newAssignment.dueDate}
                           onChange={e => setNewAssignment({ ...newAssignment, dueDate: e.target.value })}
@@ -1535,7 +1478,7 @@ function HomeworkTracker() {
                   <button onClick={addAssignment} style={{
                     padding: "10px 20px", background: (newAssignment.description.trim() && newAssignment.dateAssigned && newAssignment.dueDate) ? "#2a9d5c" : "#2a2d3a",
                     border: "none",
-                    color: (newAssignment.description.trim() && newAssignment.dateAssigned && newAssignment.dueDate) ? "#fff" : "#555",
+                    color: (newAssignment.description.trim() && newAssignment.dateAssigned && newAssignment.dueDate) ? "#fff" : "#888",
                     borderRadius: 6, cursor: "pointer",
                     fontFamily: "'Courier New', monospace", fontWeight: "bold", fontSize: 13,
                   }}>
@@ -1545,7 +1488,7 @@ function HomeworkTracker() {
               )}
 
               {checkin.assignments.length === 0 ? (
-                <div style={{ color: "#444", fontSize: 13, padding: "20px 0", textAlign: "center" }}>
+                <div style={{ color: "#777", fontSize: 13, padding: "20px 0", textAlign: "center" }}>
                   No assignments logged yet — add them as you check each platform.
                 </div>
               ) : (
@@ -1574,7 +1517,7 @@ function HomeworkTracker() {
                     }}>
                       <button onClick={() => toggleAssignment(a.id)} style={{
                         width: 22, height: 22, borderRadius: "50%",
-                        border: `2px solid ${a.done ? "#2a9d5c" : "#555"}`,
+                        border: `2px solid ${a.done ? "#2a9d5c" : "#888"}`,
                         background: a.done ? "#2a9d5c" : "transparent",
                         cursor: "pointer", flexShrink: 0,
                         display: "flex", alignItems: "center", justifyContent: "center",
@@ -1587,7 +1530,7 @@ function HomeworkTracker() {
                           {a.priority && <span style={{ fontSize: 12 }}>🔴</span>}
                           <div style={{
                             fontSize: 13,
-                            color: a.done ? "#666" : "#e8eaf0",
+                            color: a.done ? "#999" : "#e8eaf0",
                             textDecoration: a.done ? "line-through" : "none",
                           }}>
                             {a.description}
@@ -1597,7 +1540,7 @@ function HomeworkTracker() {
                           <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 3, background: `${subjectColors[a.subject]}22`, color: subjectColors[a.subject], letterSpacing: 0.5 }}>{a.subject}</span>
                           <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 3, background: `${platformColors[a.platform]}22`, color: platformColors[a.platform], letterSpacing: 0.5 }}>{a.platform}</span>
                           {a.dueDate && (
-                            <span style={{ fontSize: 10, color: "#888" }}>
+                            <span style={{ fontSize: 10, color: "#aaa" }}>
                               Due {parseDate(a.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                             </span>
                           )}
@@ -1637,7 +1580,7 @@ function HomeworkTracker() {
                         cursor: "pointer", fontSize: 15, padding: "0 2px", flexShrink: 0,
                       }}>⚑</button>
                       <button onClick={() => removeAssignment(a.id)} style={{
-                        background: "none", border: "none", color: "#444",
+                        background: "none", border: "none", color: "#777",
                         cursor: "pointer", fontSize: 16, padding: "0 4px", flexShrink: 0,
                       }}>×</button>
                     </div>
@@ -1652,7 +1595,7 @@ function HomeworkTracker() {
               borderRadius: 10, padding: "20px", marginBottom: 20,
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <div style={{ fontSize: 11, letterSpacing: 2, color: "#888", textTransform: "uppercase" }}>
+                <div style={{ fontSize: 11, letterSpacing: 2, color: "#aaa", textTransform: "uppercase" }}>
                   🎯 Tests & Quizzes
                 </div>
                 <button onClick={() => setShowTestForm(!showTestForm)} style={{
@@ -1672,7 +1615,7 @@ function HomeworkTracker() {
                 <div style={{ background: "#0f1117", border: "1px solid #2a2d3a", borderRadius: 8, padding: 16, marginBottom: 16 }}>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
                     <div>
-                      <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>SUBJECT</div>
+                      <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>SUBJECT</div>
                       <select value={newTest.subject} onChange={e => setNewTest({ ...newTest, subject: e.target.value })}
                         style={{ width: "100%", padding: "8px 10px", background: "#16181f", border: "1px solid #2a2d3a", color: "#e8eaf0", borderRadius: 5, fontFamily: "'Courier New', monospace", fontSize: 12 }}>
                         <optgroup label="── A DAY ──">
@@ -1690,7 +1633,7 @@ function HomeworkTracker() {
                       </select>
                     </div>
                     <div>
-                      <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>TYPE</div>
+                      <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>TYPE</div>
                       <select value={newTest.type} onChange={e => setNewTest({ ...newTest, type: e.target.value })}
                         style={{ width: "100%", padding: "8px 10px", background: "#16181f", border: "1px solid #2a2d3a", color: "#e8eaf0", borderRadius: 5, fontFamily: "'Courier New', monospace", fontSize: 12 }}>
                         <option>Quiz</option>
@@ -1702,7 +1645,7 @@ function HomeworkTracker() {
                     </div>
                   </div>
                   <div style={{ marginBottom: 10 }}>
-                    <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>DESCRIPTION *</div>
+                    <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>DESCRIPTION *</div>
                     <input placeholder="e.g. Bio Chapter 14 Quiz"
                       value={newTest.description}
                       onChange={e => setNewTest({ ...newTest, description: e.target.value })}
@@ -1710,7 +1653,7 @@ function HomeworkTracker() {
                     />
                   </div>
                   <div style={{ marginBottom: 12 }}>
-                    <div style={{ fontSize: 10, color: "#666", marginBottom: 5, letterSpacing: 1 }}>DATE *</div>
+                    <div style={{ fontSize: 10, color: "#999", marginBottom: 5, letterSpacing: 1 }}>DATE *</div>
                     <input type="date" value={newTest.testDate}
                       onChange={e => setNewTest({ ...newTest, testDate: e.target.value })}
                       style={{ padding: "8px 10px", background: "#16181f", border: `1px solid ${!newTest.testDate ? "#66666688" : "#2a2d3a"}`, color: "#e8eaf0", borderRadius: 5, fontFamily: "'Courier New', monospace", fontSize: 12 }}
@@ -1727,7 +1670,7 @@ function HomeworkTracker() {
                   }} style={{
                     padding: "10px 20px",
                     background: (newTest.description.trim() && newTest.testDate) ? "#ffd700" : "#2a2d3a",
-                    color: (newTest.description.trim() && newTest.testDate) ? "#0f1117" : "#555",
+                    color: (newTest.description.trim() && newTest.testDate) ? "#0f1117" : "#888",
                     border: "none", borderRadius: 6, cursor: "pointer",
                     fontFamily: "'Courier New', monospace", fontWeight: "bold", fontSize: 13,
                   }}>ADD</button>
@@ -1736,7 +1679,7 @@ function HomeworkTracker() {
 
               {/* Test list */}
               {tests.length === 0 ? (
-                <div style={{ color: "#444", fontSize: 13, padding: "10px 0", textAlign: "center" }}>
+                <div style={{ color: "#777", fontSize: 13, padding: "10px 0", textAlign: "center" }}>
                   No upcoming tests or quizzes logged.
                 </div>
               ) : (
@@ -1750,7 +1693,7 @@ function HomeworkTracker() {
                     const isPast = daysLeft < 0;
                     const isToday = daysLeft === 0;
                     const isSoon = daysLeft > 0 && daysLeft <= 2;
-                    const urgencyColor = isPast ? "#555" : isToday ? "#ef4444" : isSoon ? "#f59e0b" : "#e8eaf0";
+                    const urgencyColor = isPast ? "#888" : isToday ? "#ef4444" : isSoon ? "#f59e0b" : "#e8eaf0";
                     const typeColors = { Quiz: "#06b6d4", Test: "#ef4444", Exam: "#f97316", Project: "#8b5cf6", Presentation: "#ec4899" };
                     return (
                       <div key={t.id} style={{
@@ -1776,7 +1719,7 @@ function HomeworkTracker() {
                           const updated = tests.filter(x => x.id !== t.id);
                           setTests(updated);
                           save(checkin, history, undefined, updated);
-                        }} style={{ background: "none", border: "none", color: "#444", cursor: "pointer", fontSize: 16, padding: "0 4px", flexShrink: 0 }}>×</button>
+                        }} style={{ background: "none", border: "none", color: "#777", cursor: "pointer", fontSize: 16, padding: "0 4px", flexShrink: 0 }}>×</button>
                       </div>
                     );
                   })}
@@ -1792,7 +1735,7 @@ function HomeworkTracker() {
               padding: "20px",
               marginBottom: 20,
             }}>
-              <div style={{ fontSize: 11, letterSpacing: 2, color: "#888", marginBottom: 12, textTransform: "uppercase" }}>
+              <div style={{ fontSize: 11, letterSpacing: 2, color: "#aaa", marginBottom: 12, textTransform: "uppercase" }}>
                 Don't Forget
               </div>
 
@@ -1819,7 +1762,7 @@ function HomeworkTracker() {
               {/* Reminder date + save */}
               <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 16, flexWrap: "wrap" }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                  <div style={{ fontSize: 10, color: "#666", letterSpacing: 1 }}>REMIND ME ON (optional)</div>
+                  <div style={{ fontSize: 10, color: "#999", letterSpacing: 1 }}>REMIND ME ON (optional)</div>
                   <input type="date"
                     value={checkin.noteReminderDate || ""}
                     onChange={e => {
@@ -1849,7 +1792,7 @@ function HomeworkTracker() {
                 }} style={{
                   padding: "10px 20px", marginTop: 18,
                   background: checkin.notes.trim() ? "#ffd700" : "#2a2d3a",
-                  color: checkin.notes.trim() ? "#0f1117" : "#555",
+                  color: checkin.notes.trim() ? "#0f1117" : "#888",
                   border: "none", borderRadius: 6, cursor: checkin.notes.trim() ? "pointer" : "default",
                   fontFamily: "'Courier New', monospace", fontWeight: "bold", fontSize: 12,
                   letterSpacing: 1, whiteSpace: "nowrap",
@@ -1898,7 +1841,7 @@ function HomeworkTracker() {
                         save(next, history);
                       }} style={{
                         width: 20, height: 20, borderRadius: "50%", flexShrink: 0, marginTop: 2,
-                        border: `2px solid ${note.done ? "#2a9d5c" : "#555"}`,
+                        border: `2px solid ${note.done ? "#2a9d5c" : "#888"}`,
                         background: note.done ? "#2a9d5c" : "transparent",
                         cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
                         fontSize: 11, color: "#fff", transition: "all 0.2s",
@@ -1907,15 +1850,15 @@ function HomeworkTracker() {
                       </button>
                       <div style={{ flex: 1 }}>
                         <div style={{
-                          fontSize: 13, color: note.done ? "#666" : "#e8eaf0",
+                          fontSize: 13, color: note.done ? "#999" : "#e8eaf0",
                           textDecoration: note.done ? "line-through" : "none",
                         }}>{note.text}</div>
                         <div style={{ display: "flex", gap: 10, marginTop: 4, flexWrap: "wrap" }}>
-                          <span style={{ fontSize: 10, color: "#555" }}>Saved at {note.time}</span>
+                          <span style={{ fontSize: 10, color: "#888" }}>Saved at {note.time}</span>
                           {note.reminderDate && (
                             <span style={{
                               fontSize: 10,
-                              color: note.reminderDate === todayKey() ? "#ffd700" : "#888",
+                              color: note.reminderDate === todayKey() ? "#ffd700" : "#aaa",
                             }}>
                               ⏰ {note.reminderDate === todayKey() ? "Flagged today" : `Reminder: ${new Date(note.reminderDate + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
                             </span>
@@ -1927,7 +1870,7 @@ function HomeworkTracker() {
                         setCheckin(next);
                         save(next, history);
                       }} style={{
-                        background: "none", border: "none", color: "#444",
+                        background: "none", border: "none", color: "#777",
                         cursor: "pointer", fontSize: 16, padding: "0 2px", flexShrink: 0,
                       }}>×</button>
                     </div>
@@ -1942,7 +1885,7 @@ function HomeworkTracker() {
                 <button onClick={completeCheckin} style={{
                   padding: "14px 28px",
                   background: allDone && allPlatformsChecked ? "#2a9d5c" : "#2a2d3a",
-                  color: allDone && allPlatformsChecked ? "#fff" : "#666",
+                  color: allDone && allPlatformsChecked ? "#fff" : "#999",
                   border: "none", borderRadius: 8, cursor: "pointer",
                   fontFamily: "'Courier New', monospace", fontWeight: "bold", fontSize: 14,
                   letterSpacing: 1,
@@ -1961,7 +1904,7 @@ function HomeworkTracker() {
               )}
               <button onClick={resetToday} style={{
                 padding: "14px 20px", background: "none",
-                border: "1px solid #2a2d3a", color: "#666",
+                border: "1px solid #2a2d3a", color: "#999",
                 borderRadius: 8, cursor: "pointer",
                 fontFamily: "'Courier New', monospace", fontSize: 12,
               }}>
@@ -1997,11 +1940,11 @@ function HomeworkTracker() {
                 </div>
               </div>
             )}
-            <div style={{ fontSize: 11, letterSpacing: 2, color: "#888", marginBottom: 20, textTransform: "uppercase" }}>
+            <div style={{ fontSize: 11, letterSpacing: 2, color: "#aaa", marginBottom: 20, textTransform: "uppercase" }}>
               Past Check-Ins
             </div>
             {history.length === 0 ? (
-              <div style={{ color: "#444", textAlign: "center", padding: 40 }}>
+              <div style={{ color: "#777", textAlign: "center", padding: 40 }}>
                 No history yet. Complete today's check-in to start tracking!
               </div>
             ) : (
@@ -2050,15 +1993,15 @@ function HomeworkTracker() {
                           </span>
                           <span style={{
                             fontSize: 13,
-                            color: a.done ? "#666" : "#aaa",
+                            color: a.done ? "#999" : "#aaa",
                             textDecoration: a.done ? "line-through" : "none",
                             flex: 1,
                           }}>{a.description}</span>
-                          <span style={{ fontSize: 10, color: "#555" }}>{a.subject}</span>
+                          <span style={{ fontSize: 10, color: "#888" }}>{a.subject}</span>
                         </div>
                       ))}
                       {entry.notes && (
-                        <div style={{ marginTop: 10, fontSize: 12, color: "#888", fontStyle: "italic" }}>
+                        <div style={{ marginTop: 10, fontSize: 12, color: "#aaa", fontStyle: "italic" }}>
                           📝 {entry.notes}
                         </div>
                       )}
@@ -2106,7 +2049,7 @@ function HomeworkTracker() {
               {/* Parent header */}
               <div style={{ background: "#16181f", border: "1px solid #2a2d3a", borderRadius: 10, padding: "18px 20px", marginBottom: 20 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-                <div style={{ fontSize: 11, letterSpacing: 2, color: "#888", textTransform: "uppercase" }}>⚡ TL;DR Snapshot</div>
+                <div style={{ fontSize: 11, letterSpacing: 2, color: "#aaa", textTransform: "uppercase" }}>⚡ TL;DR Snapshot</div>
                 <button onClick={() => {
                   const todayStr = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
                   const dayLabel = todayType ? `${todayType} Day` : "Weekend";
@@ -2166,22 +2109,22 @@ ${perfList}
                   ✉ EMAIL SNAPSHOT
                 </button>
               </div>
-                <div style={{ fontSize: 11, color: "#555", marginBottom: 16 }}>
+                <div style={{ fontSize: 11, color: "#888", marginBottom: 16 }}>
                   {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })} · {todayType ? `${todayType} Day` : "Weekend"}
                 </div>
                 {/* Key stats row */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
                   {[
-                    { label: "Streak", value: streak, unit: "days", color: streak > 0 ? "#f97316" : "#444", emoji: "🔥" },
-                    { label: "This Week", value: weekGrade ? `${weekGrade.grade}` : "—", unit: weekGrade ? `${weekGrade.pct}%` : "", color: weekGrade ? weekGrade.color : "#444", emoji: "📊" },
+                    { label: "Streak", value: streak, unit: "days", color: streak > 0 ? "#f97316" : "#777", emoji: "🔥" },
+                    { label: "This Week", value: weekGrade ? `${weekGrade.grade}` : "—", unit: weekGrade ? `${weekGrade.pct}%` : "", color: weekGrade ? weekGrade.color : "#777", emoji: "📊" },
                     { label: "Overdue", value: overdue.length, unit: "items", color: overdue.length > 0 ? "#ef4444" : "#2a9d5c", emoji: "⚠️" },
-                    { label: "Perfect Days", value: winDays, unit: "total", color: winDays > 0 ? "#ffd700" : "#444", emoji: "🏆" },
+                    { label: "Perfect Days", value: winDays, unit: "total", color: winDays > 0 ? "#ffd700" : "#777", emoji: "🏆" },
                   ].map(s => (
                     <div key={s.label} style={{ background: "#0f1117", border: "1px solid #2a2d3a", borderRadius: 8, padding: "12px", textAlign: "center" }}>
                       <div style={{ fontSize: 18 }}>{s.emoji}</div>
                       <div style={{ fontSize: 22, fontWeight: "bold", color: s.color, marginTop: 4 }}>{s.value}</div>
-                      <div style={{ fontSize: 9, color: "#555", letterSpacing: 1 }}>{s.label.toUpperCase()}</div>
-                      {s.unit && <div style={{ fontSize: 10, color: "#444" }}>{s.unit}</div>}
+                      <div style={{ fontSize: 9, color: "#888", letterSpacing: 1 }}>{s.label.toUpperCase()}</div>
+                      {s.unit && <div style={{ fontSize: 10, color: "#777" }}>{s.unit}</div>}
                     </div>
                   ))}
                 </div>
@@ -2226,7 +2169,7 @@ ${perfList}
               {/* Upcoming tests */}
               {upcomingTests.length > 0 && (
                 <div style={{ background: "#16181f", border: "1px solid #2a2d3a", borderRadius: 10, padding: "18px 20px", marginBottom: 20 }}>
-                  <div style={{ fontSize: 11, letterSpacing: 2, color: "#888", marginBottom: 12, textTransform: "uppercase" }}>🎯 Upcoming Tests & Quizzes</div>
+                  <div style={{ fontSize: 11, letterSpacing: 2, color: "#aaa", marginBottom: 12, textTransform: "uppercase" }}>🎯 Upcoming Tests & Quizzes</div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {upcomingTests.map(t => {
                       const parts = t.testDate.split("-").map(Number);
@@ -2236,7 +2179,7 @@ ${perfList}
                         <div key={t.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: "#0f1117", borderRadius: 6 }}>
                           <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 3, background: `${subjectColors[t.subject]}22`, color: subjectColors[t.subject] }}>{t.subject}</span>
                           <span style={{ fontSize: 13, color: "#e8eaf0", flex: 1 }}>{t.description}</span>
-                          <span style={{ fontSize: 10, color: daysLeft === 0 ? "#ef4444" : daysLeft <= 2 ? "#f59e0b" : "#888", fontWeight: daysLeft <= 2 ? "bold" : "normal" }}>
+                          <span style={{ fontSize: 10, color: daysLeft === 0 ? "#ef4444" : daysLeft <= 2 ? "#f59e0b" : "#aaa", fontWeight: daysLeft <= 2 ? "bold" : "normal" }}>
                             {daysLeft === 0 ? "TODAY" : `${daysLeft}d away`}
                           </span>
                         </div>
@@ -2248,7 +2191,7 @@ ${perfList}
 
               {/* Subject performance */}
               <div style={{ background: "#16181f", border: "1px solid #2a2d3a", borderRadius: 10, padding: "18px 20px", marginBottom: 20 }}>
-                <div style={{ fontSize: 11, letterSpacing: 2, color: "#888", marginBottom: 16, textTransform: "uppercase" }}>📈 Subject Performance</div>
+                <div style={{ fontSize: 11, letterSpacing: 2, color: "#aaa", marginBottom: 16, textTransform: "uppercase" }}>📈 Subject Performance</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {Object.entries(subjectStats)
                     .filter(([, s]) => s.total > 0)
@@ -2276,7 +2219,7 @@ ${perfList}
                       );
                     })}
                   {Object.values(subjectStats).every(s => s.total === 0) && (
-                    <div style={{ color: "#444", textAlign: "center", padding: 20, fontSize: 13 }}>No assignment data yet.</div>
+                    <div style={{ color: "#777", textAlign: "center", padding: 20, fontSize: 13 }}>No assignment data yet.</div>
                   )}
                 </div>
               </div>
