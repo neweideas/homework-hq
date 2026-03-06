@@ -637,14 +637,36 @@ function HomeworkTracker() {
           {checkin.completed && (
             <div style={{ fontSize: 11, color: "#2a9d5c" }}>✓ Check-in complete</div>
           )}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 2 }}>
           <button onClick={() => setShowWeekendPrep(true)} style={{
             padding: "6px 14px", background: "#a78bfa22",
             border: "1px solid #a78bfa55", color: "#a78bfa",
             borderRadius: 6, cursor: "pointer", fontSize: 11,
-            fontFamily: "'Courier New', monospace", letterSpacing: 1, marginTop: 2,
+            fontFamily: "'Courier New', monospace", letterSpacing: 1,
           }}>
             🗓 WEEKEND PREP
           </button>
+          <button onClick={async () => {
+            try {
+              const permission = await Notification.requestPermission();
+              if (permission !== 'granted') { alert('Please enable notifications in your browser settings.'); return; }
+              const reg = await navigator.serviceWorker.ready;
+              const sub = await reg.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: "BN5SCuZMCcbif275MKwCPNzoXAVQG5jRb58U8qnWqAdZ-0Fte6buu9_9NawI_U5rXdF9rFiH5ihSCf6smfw1Ykk",
+              });
+              await supabase.from('push_subscriptions').upsert({ user_id: USER_ID, subscription: sub.toJSON() }, { onConflict: 'user_id' });
+              alert('✅ Reminders enabled! You\'ll get a 5 PM check-in reminder every weekday.');
+            } catch (err) { alert('Could not enable notifications: ' + err.message); }
+          }} style={{
+            padding: "6px 14px", background: "#2a9d5c22",
+            border: "1px solid #2a9d5c55", color: "#2a9d5c",
+            borderRadius: 6, cursor: "pointer", fontSize: 11,
+            fontFamily: "'Courier New', monospace", letterSpacing: 1,
+          }}>
+            🔔 REMINDERS
+          </button>
+          </div>
         </div>
       </div>
 
