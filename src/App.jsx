@@ -295,6 +295,7 @@ function HomeworkTracker() {
   const [reminderTime, setReminderTime] = useState("17:00");
 
   const [tempHabits, setTempHabits] = useState([]);
+  const [syncStatus, setSyncStatus] = useState(null); // null | 'saving' | 'saved' | 'error'
 
   // Load from Supabase
   useEffect(() => {
@@ -319,20 +320,51 @@ function HomeworkTracker() {
     load();
   }, []);
 
+  // Re-sync when tab regains focus (fixes cross-device stale data)
+  useEffect(() => {
+    const syncFromSupabase = () => {
+      supabase.from('checkins').select('data').eq('user_id', USER_ID).maybeSingle()
+        .then(({ data }) => {
+          if (data?.data) {
+            const d = data.data;
+            setHistory(d.history || []);
+            if (d.today && d.today.date === todayKey()) setCheckin(d.today);
+            if (d.tempHabits) setTempHabits(d.tempHabits);
+            if (d.tests) setTests(d.tests);
+          }
+        })
+        .catch(() => {});
+    };
+    const handleVisibility = () => { if (!document.hidden) syncFromSupabase(); };
+    window.addEventListener('focus', syncFromSupabase);
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      window.removeEventListener('focus', syncFromSupabase);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, []);
+
   // Save to Supabase
   const save = (updatedCheckin, updatedHistory, updatedTempHabits, updatedTests) => {
-    try {
-      supabase.from('checkins').upsert({
-        user_id: USER_ID,
-        data: {
-          today: updatedCheckin,
-          history: updatedHistory,
-          tempHabits: updatedTempHabits !== undefined ? updatedTempHabits : tempHabits,
-          tests: updatedTests !== undefined ? updatedTests : tests,
-        },
-        updated_at: new Date().toISOString(),
-      }, { onConflict: 'user_id' }).then(() => {}).catch(() => {});
-    } catch (e) {}
+    setSyncStatus('saving');
+    supabase.from('checkins').upsert({
+      user_id: USER_ID,
+      data: {
+        today: updatedCheckin,
+        history: updatedHistory,
+        tempHabits: updatedTempHabits !== undefined ? updatedTempHabits : tempHabits,
+        tests: updatedTests !== undefined ? updatedTests : tests,
+      },
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' })
+      .then(() => {
+        setSyncStatus('saved');
+        setTimeout(() => setSyncStatus(null), 2000);
+      })
+      .catch(() => {
+        setSyncStatus('error');
+        setTimeout(() => setSyncStatus(null), 4000);
+      });
   };
 
   const checkHabitsComplete = (nextCheckin, currentTempHabits) => {
@@ -658,6 +690,15 @@ function HomeworkTracker() {
             )}
             {checkin.completed && (
               <div style={{ fontSize: 11, color: "#2a9d5c" }}>✓ Check-in complete</div>
+            )}
+            {syncStatus === 'saving' && (
+              <div style={{ fontSize: 10, color: "#888", letterSpacing: 1 }}>⟳ Syncing...</div>
+            )}
+            {syncStatus === 'saved' && (
+              <div style={{ fontSize: 10, color: "#2a9d5c", letterSpacing: 1 }}>✓ Synced</div>
+            )}
+            {syncStatus === 'error' && (
+              <div style={{ fontSize: 10, color: "#ef4444", letterSpacing: 1 }}>✗ Sync failed</div>
             )}
           </div>
         </div>
@@ -2322,6 +2363,8 @@ ${perfList}
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0f1117; }
         ::-webkit-scrollbar-thumb { background: #2a2d3a; border-radius: 3px; }
+        ::-webkit-calendar-picker-indicator { filter: invert(0.7) brightness(1.5); cursor: pointer; }
+        input[type="date"] { color-scheme: dark; }
       `}</style>
     </div>
   );
