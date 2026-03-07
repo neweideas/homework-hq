@@ -294,6 +294,8 @@ function HomeworkTracker() {
   const [showReminderModal, setShowReminderModal] = useState(false);
   const [reminderTime, setReminderTime] = useState("17:00");
 
+  const [tempHabits, setTempHabits] = useState([]);
+
   // Load from Supabase
   useEffect(() => {
     const load = async () => {
@@ -317,12 +319,10 @@ function HomeworkTracker() {
     load();
   }, []);
 
-  const [tempHabits, setTempHabits] = useState([]);
-
   // Save to Supabase
-  const save = async (updatedCheckin, updatedHistory, updatedTempHabits, updatedTests) => {
+  const save = (updatedCheckin, updatedHistory, updatedTempHabits, updatedTests) => {
     try {
-      await supabase.from('checkins').upsert({
+      supabase.from('checkins').upsert({
         user_id: USER_ID,
         data: {
           today: updatedCheckin,
@@ -331,7 +331,7 @@ function HomeworkTracker() {
           tests: updatedTests !== undefined ? updatedTests : tests,
         },
         updated_at: new Date().toISOString(),
-      }, { onConflict: 'user_id' });
+      }, { onConflict: 'user_id' }).then(() => {}).catch(() => {});
     } catch (e) {}
   };
 
